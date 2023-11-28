@@ -1,0 +1,96 @@
+Private Sub CommandButton1_Click()
+Dim sh As Worksheet
+Set sh = ThisWorkbook.Sheets("Database")
+
+Dim Last_Row As Long
+Last_Row = Application.WorksheetFunction.CountA(sh.Range("A:A"))
+
+'================================== Validations ===================================='
+If Me.TextBox1.Value = "" Then
+    MsgBox "Please enter the Name", vbCritical
+    Exit Sub
+End If
+
+If Me.TextBox2.Value = "" Then
+    MsgBox "Please enter the Country", vbCritical
+    Exit Sub
+End If
+
+If Me.TextBox4.Value = "" Then
+    MsgBox "Please enter your Mobile Number", vbCritical
+    Exit Sub
+End If
+
+If Me.ComboBox1.Value = "" Then
+    MsgBox "Please enter Gender", vbCritical
+    Exit Sub
+End If
+
+'==================================================================================='
+
+sh.Range("A" & Last_Row + 1).Value = "=ROW()-1"
+sh.Range("B" & Last_Row + 1).Value = Me.TextBox1.Value
+sh.Range("C" & Last_Row + 1).Value = Me.TextBox2.Value
+sh.Range("D" & Last_Row + 1).Value = Me.TextBox4.Value
+sh.Range("E" & Last_Row + 1).Value = Me.ComboBox1.Value
+sh.Range("F" & Last_Row + 1).Value = Now
+
+Me.TextBox1.Value = ""
+Me.TextBox2.Value = ""
+Me.TextBox4.Value = ""
+Me.ComboBox1.Value = ""
+
+Call Refresh_Data
+
+End Sub
+
+Private Sub CommandButton4_Click()
+ThisWorkbook.Save
+MsgBox "Data Saved!"
+End Sub
+
+Private Sub ListBox1_DblClick(ByVal Cancel As MSForms.ReturnBoolean)
+Me.TextBox1.Value = Me.ListBox1.List(Me.ListBox1.ListIndex, 1)
+Me.TextBox2.Value = Me.ListBox1.List(Me.ListBox1.ListIndex, 2)
+Me.TextBox4.Value = Me.ListBox1.List(Me.ListBox1.ListIndex, 3)
+Me.ComboBox1.Value = Me.ListBox1.List(Me.ListBox1.ListIndex, 4)
+
+End Sub
+
+Private Sub UserForm_Activate()
+
+With Me.ComboBox1
+    .Clear
+    .AddItem ""
+    .AddItem "Male"
+    .AddItem "Female"
+  
+End With
+
+Call Refresh_Data
+
+End Sub
+
+
+Sub Refresh_Data()
+Dim sh As Worksheet
+Set sh = ThisWorkbook.Sheets("Database")
+
+Dim Last_Row As Long
+
+Last_Row = Application.WorksheetFunction.CountA(sh.Range("A:A"))
+
+With Me.ListBox1
+    .ColumnHeads = True
+    .ColumnCount = 6
+    .ColumnWidths = "30, 100, 90, 80, 60, 90"
+     
+If Last_Row = 1 Then
+    .RowSource = "Database!A2:F2"
+Else
+    .RowSource = "Database!A2:F" & Last_Row
+End If
+End With
+
+End Sub
+
